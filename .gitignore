@@ -1,0 +1,5 @@
+node_modules/
+test/out/
+mcp/test/out/
+*.log
+.DS_Store
