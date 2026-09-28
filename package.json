@@ -2,12 +2,14 @@
   "name": "doooom-shatter",
   "version": "0.1.0",
   "private": true,
-  "description": "Doooom Shatter — a 2026 recreation of KPT Vector Effects' ShatterBox for Adobe Illustrator, plus an MCP server for agentic use",
+  "description": "Doooom Shatter \u2014 a 2026 recreation of KPT Vector Effects' ShatterBox for Adobe Illustrator, plus an MCP server for agentic use",
   "scripts": {
     "build": "node scripts/build.js",
     "test": "node test/geometry.test.js",
     "render": "node test/render.js",
-    "mcp": "node mcp/src/server.js"
+    "mcp": "node mcp/src/server.js",
+    "shatter": "node bin/doooom-shatter.mjs shatter",
+    "raster": "node bin/doooom-shatter.mjs raster"
   },
   "workspaces": [
     "mcp"
@@ -16,5 +18,12 @@
     "acorn": "^8.18.0",
     "playwright": "^1.47.0"
   },
-  "license": "MIT"
+  "license": "MIT",
+  "bin": {
+    "doooom-shatter": "bin/doooom-shatter.mjs"
+  },
+  "optionalDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "sharp": "^0.33.5"
+  }
 }

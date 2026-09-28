@@ -90,3 +90,28 @@ KPT Vector Effects 1.0 shipped from MetaTools in late 1995: 13 filters for FreeH
 ## License
 
 MIT
+
+## Without Illustrator
+
+The fracture engine is plain JavaScript and the SVG writer only does string work, so the effect is
+not tied to Illustrator at all - Illustrator is one front end for it. On a build machine, in a
+container or in a cloud job, use the CLI:
+
+```bash
+npm install                                   # engine only; the rasteriser is optional
+doooom-shatter presets
+doooom-shatter shatter logo.svg -o shattered.svg --preset doooom --seed 1995
+doooom-shatter raster shattered.svg -o shattered.png --width 3047 --trim
+```
+
+`shatter` reads any SVG - gradients, text, images - keeps the source in `<defs>` and emits one
+clipped `<use>` per shard, so the result stays editable vector. `--set key=value` reaches every
+setting the dialog exposes (`--set shards=240 --set time=70`), and the seed is reported so a look
+can be reproduced.
+
+`raster` renders through [resvg](https://github.com/yisibl/resvg-js), which ships prebuilt binaries
+and needs no system libraries and no headless browser - a few seconds for a full-size sheet. It is
+an optional dependency: shattering works without it. `--trim` crops to the ink, which matters when
+the SVG came out of Illustrator carrying a much larger artboard than the art.
+
+Round trip on a 2048px logo: 0.06s to shatter, ~3s to rasterise.

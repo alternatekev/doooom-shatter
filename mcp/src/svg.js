@@ -1,5 +1,9 @@
 // Headless SVG shattering: wraps the source artwork in <defs> and emits one clipped <use> per shard.
-import { core } from './settings.js';
+// The engine only - deliberately not settings.js, so this module (and the CLI that uses it)
+// stays free of the MCP server's dependencies and runs anywhere Node does.
+import { createRequire } from 'node:module';
+const require = createRequire(import.meta.url);
+const core = require('../../core/fracture.js');
 
 const num = (s) => parseFloat(String(s).replace(/[^0-9.eE+-]/g, ''));
 

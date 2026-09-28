@@ -16,14 +16,22 @@ export async function runJsx(source, { timeoutMs = 120000 } = {}) {
   const dir = await mkdtemp(join(tmpdir(), 'doooom-'));
   const file = join(dir, 'run.jsx');
   try {
-    await writeFile(file, source, 'utf8');
     if (process.platform === 'darwin') {
-      const { stdout } = await run('osascript', [
-        '-e', `set f to POSIX file ${JSON.stringify(file)}`,
-        '-e', 'tell application id "com.adobe.illustrator" to do javascript f',
-      ], { timeout: timeoutMs, maxBuffer: 16 * 1024 * 1024 });
+      // Hand Illustrator the SOURCE, not a path. Adobe apps routinely fail to resolve a POSIX
+      // file under /tmp (sandboxing), and `do javascript f` then dies with -1728. osascript
+      // itself reads the .applescript file happily, so only the JSX travels as an argument.
+      const osa = join(dir, 'run.applescript');
+      await writeFile(osa, [
+        'on run argv',
+        `  with timeout of ${Math.ceil(timeoutMs / 1000)} seconds`,
+        '    tell application id "com.adobe.illustrator" to do javascript (item 1 of argv)',
+        '  end timeout',
+        'end run',
+      ].join('\n'), 'utf8');
+      const { stdout } = await run('osascript', [osa, source], { timeout: timeoutMs, maxBuffer: 16 * 1024 * 1024 });
       return stdout.trim();
     }
+    await writeFile(file, source, 'utf8');
     if (process.platform === 'win32') {
       const ps = `$app = New-Object -ComObject Illustrator.Application; $r = $app.DoJavaScriptFile(${JSON.stringify(file)}); Write-Output $r`;
       const { stdout } = await run('powershell', ['-NoProfile', '-NonInteractive', '-Command', ps], { timeout: timeoutMs, maxBuffer: 16 * 1024 * 1024 });
