@@ -9,7 +9,8 @@
     "render": "node test/render.js",
     "mcp": "node mcp/src/server.js",
     "shatter": "node bin/doooom-shatter.mjs shatter",
-    "raster": "node bin/doooom-shatter.mjs raster"
+    "raster": "node bin/doooom-shatter.mjs raster",
+    "smoke": "node test/presets.mjs"
   },
   "workspaces": [
     "mcp"
